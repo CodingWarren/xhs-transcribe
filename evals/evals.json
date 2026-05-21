@@ -1,0 +1,23 @@
+{
+  "skill_name": "xhs-transcribe",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我把这个小红书视频转成文字：https://www.xiaohongshu.com/explore/67f7f05b000000000e006d12?xsec_token=AB_1oMlreP_eST9ZMOx-9f_PZEADA_31F26ToMGGY_1lM=&xsec_source=pc_user",
+      "expected_output": "完成视频下载和转录，输出文字稿内容，并告知保存路径",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "提取这个视频里的文字内容，帮我看看里面讲了什么：https://www.xiaohongshu.com/explore/67f7f05b000000000e006d12?xsec_token=AB_1oMlreP_eST9ZMOx-9f_PZEADA_31F26ToMGGY_1lM=&xsec_source=pc_user",
+      "expected_output": "识别为转录任务，执行下载+转录，展示文字稿",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "帮我转录小红书视频",
+      "expected_output": "询问用户提供具体的小红书链接",
+      "files": []
+    }
+  ]
+}
