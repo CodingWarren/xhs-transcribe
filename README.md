@@ -45,7 +45,7 @@ Just paste a video link and ask Claude to transcribe it:
 
 The transcript is saved as:
 ```
-/tmp/xhs/<video title>/
+~/xhs-videos/<video title>/
 ├── <video title>.mp4   (or .m4a for Bilibili)
 └── <video title>.md    ← transcript
 ```

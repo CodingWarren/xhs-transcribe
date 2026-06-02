@@ -21,8 +21,8 @@ description: >
 
 **小红书：**
 ```bash
-mkdir -p /tmp/xhs
-yt-dlp -o "/tmp/xhs/%(title).60s/%(title).60s.%(ext)s" "用户提供的链接"
+mkdir -p ~/xhs-videos
+yt-dlp -o "~/xhs-videos/%(title).60s/%(title).60s.%(ext)s" "用户提供的链接"
 ```
 
 > **链接要求**：必须包含 `xsec_token` 参数的完整链接，或 `xhslink.com` 短链。
@@ -30,7 +30,7 @@ yt-dlp -o "/tmp/xhs/%(title).60s/%(title).60s.%(ext)s" "用户提供的链接"
 
 **B站（Bilibili）：**
 ```bash
-yt-dlp -o "/tmp/xhs/%(title).60s/%(title).60s.%(ext)s" "B站链接"
+yt-dlp -o "~/xhs-videos/%(title).60s/%(title).60s.%(ext)s" "B站链接"
 ```
 
 > B站视频和音频会分开下载（`.mp4` + `.m4a`），转录时传 `.m4a` 文件给 transcribe.py。
@@ -38,9 +38,9 @@ yt-dlp -o "/tmp/xhs/%(title).60s/%(title).60s.%(ext)s" "B站链接"
 ### 第二步：转录
 
 ```bash
-python3 ~/.claude/skills/xhs-transcribe/scripts/transcribe.py "/tmp/xhs/视频标题/视频标题.mp4"
+python3 ~/.claude/skills/xhs-transcribe/scripts/transcribe.py "~/xhs-videos/视频标题/视频标题.mp4"
 # 文字稿自动保存在同目录，文件名与视频相同但扩展名为 .md
-# 结果：/tmp/xhs/视频标题/视频标题.md
+# 结果：~/xhs-videos/视频标题/视频标题.md
 ```
 
 ### 第三步：整理并展示结果
