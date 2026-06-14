@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-小红书视频转录脚本
-用法：python3 transcribe.py <video_path> [output_path]
+小红书/B站/YouTube 视频转录脚本
+用法：python3 transcribe.py <video_path> [output_path] [--lang LANG]
+  LANG 可选：zh (默认), en, ja, auto 等
 """
 import sys
+import argparse
 from pathlib import Path
 
-def transcribe(video_path: str, output_path: str = None):
+def transcribe(video_path: str, output_path: str = None, language: str = "zh"):
     try:
         from faster_whisper import WhisperModel
     except ImportError:
@@ -20,13 +22,14 @@ def transcribe(video_path: str, output_path: str = None):
 
     out = Path(output_path) if output_path else video.with_suffix('.md')
 
+    lang_display = language if language != "auto" else "自动检测"
     print(f"加载 large-v3 模型（首次运行需下载约 1.5GB）...")
     model = WhisperModel("large-v3", device="cpu", compute_type="int8")
 
-    print(f"开始转录：{video.name}")
+    print(f"开始转录：{video.name}（语言：{lang_display}）")
     segments, info = model.transcribe(
         str(video),
-        language="zh",
+        language=None if language == "auto" else language,
         beam_size=5,
         vad_filter=True,
         vad_parameters=dict(min_silence_duration_ms=500),
@@ -53,7 +56,9 @@ def transcribe(video_path: str, output_path: str = None):
     return str(out)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("用法：python3 transcribe.py <video_path> [output_path]")
-        sys.exit(1)
-    transcribe(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
+    parser = argparse.ArgumentParser(description="视频转录脚本")
+    parser.add_argument("video_path", help="视频文件路径")
+    parser.add_argument("output_path", nargs="?", default=None, help="输出文件路径（可选）")
+    parser.add_argument("--lang", default="zh", help="语言：zh/en/ja/auto（默认 zh）")
+    args = parser.parse_args()
+    transcribe(args.video_path, args.output_path, args.lang)
