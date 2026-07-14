@@ -33,10 +33,22 @@ description: >
 
 如果用户只说"下载"、"download"，或明确只需要视频文件，则执行此步骤：
 
-**小红书/B站/YouTube 通用：**
+**B站/YouTube：**
 ```bash
 mkdir -p "/Volumes/warren/xhs/%(uploader)s"
 yt-dlp -o "/Volumes/warren/xhs/%(uploader)s/%(title)s.%(ext)s" "视频链接"
+```
+
+**小红书**（yt-dlp 无法提取博主昵称，需先抓取页面）：
+```bash
+VIDEO_URL="视频链接"
+NICKNAME=$(python3 ~/.claude/skills/xhs-transcribe/scripts/get_xhs_nickname.py "$VIDEO_URL")
+# Fallback to uploader_id if nickname extraction fails
+if [ -z "$NICKNAME" ]; then
+    NICKNAME=$(yt-dlp --dump-json --no-download "$VIDEO_URL" 2>/dev/null | grep -o '"uploader_id":"[^"]*"' | cut -d'"' -f4)
+fi
+mkdir -p "/Volumes/warren/xhs/${NICKNAME}"
+yt-dlp -o "/Volumes/warren/xhs/${NICKNAME}/%(title)s.%(ext)s" "$VIDEO_URL"
 ```
 
 > **小红书链接要求**：必须包含 `xsec_token` 参数的完整链接，或 `xhslink.com` 短链。
@@ -75,23 +87,18 @@ python3 ~/.claude/skills/xhs-transcribe/scripts/transcribe.py "/Volumes/warren/x
 # 结果：/Volumes/warren/xhs/博主名字/视频标题.md
 ```
 
-### 第三步：整理并展示结果
+### 第三步：整理文字稿
 
-转录完成后，在展示前做两步清理：
+转录完成后，做两步清理：
 
 1. **合并重复行**：如果同一行文字连续出现 3 次以上，合并为一行（转录末尾常见）
 2. **还原章节结构**：如果文字稿中出现明显的结构标记（如"第一遍""第三遍""第X章"），将其提升为 Markdown 标题（`###`），让输出更易读
 
-在 .md 文件开头加上视频链接（从用户提供的原始链接中提取，格式：`https://www.xiaohongshu.com/discovery/item/xxxxx`），放在时长和语言后面。
+### 第四步：加入视频链接
 
-然后展示：
-- 文字稿保存路径
-- 视频时长和语言
-- 按章节整理后的完整文字稿内容
-- 【人工整理版】（由 Claude 基于完整文字稿生成，只修正错别字和标点，原汁原味保留口播内容）
-- 如有字幕误识别（如"中文字幕 XXX"反复出现），在末尾说明这是正常现象
+用 `Edit` 工具在 .md 文件的"语言"行后面插入视频链接（从用户提供的原始链接中提取，格式：`https://www.xiaohongshu.com/discovery/item/xxxxx`）。
 
-### 第四步：生成人工整理版
+### 第五步：生成并写入人工整理版
 
 基于【完整文字稿】，由 Claude 生成一份人工整理版，要求：
 - **不改变**口播原文的词语表达和意思
@@ -100,7 +107,16 @@ python3 ~/.claude/skills/xhs-transcribe/scripts/transcribe.py "/Volumes/warren/x
 - 适当添加标点符号（句号、逗号），使语句通顺
 - 可适当分段落（按话题或时间推进），但不重组句意
 
-将人工整理版作为第三个板块【人工整理版】输出到 .md 文件中。
+**关键：人工整理版生成后，必须先用 `Edit` 工具将其追加写入 .md 文件末尾（作为第三个板块【人工整理版】），然后再展示给用户。**
+
+### 第六步：展示结果
+
+展示给用户：
+- 文字稿保存路径
+- 视频时长和语言
+- 按章节整理后的完整文字稿内容
+- 【人工整理版】
+- 如有字幕误识别（如"中文字幕 XXX"反复出现），在末尾说明这是正常现象
 
 ---
 
