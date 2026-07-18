@@ -36,7 +36,8 @@ description: >
 **B站/YouTube：**
 ```bash
 mkdir -p "/Volumes/warren/xhs/%(uploader)s"
-yt-dlp -o "/Volumes/warren/xhs/%(uploader)s/%(title)s.%(ext)s" "视频链接"
+yt-dlp -S "vcodec:h264,res,acodec:m4a" --merge-output-format mp4 \
+  -o "/Volumes/warren/xhs/%(uploader)s/%(title)s.mp4" "视频链接"
 ```
 
 **小红书**（yt-dlp 无法提取博主昵称，需先抓取页面）：
@@ -48,7 +49,8 @@ if [ -z "$NICKNAME" ]; then
     NICKNAME=$(yt-dlp --dump-json --no-download "$VIDEO_URL" 2>/dev/null | grep -o '"uploader_id":"[^"]*"' | cut -d'"' -f4)
 fi
 mkdir -p "/Volumes/warren/xhs/${NICKNAME}"
-yt-dlp -o "/Volumes/warren/xhs/${NICKNAME}/%(title)s.%(ext)s" "$VIDEO_URL"
+yt-dlp -S "vcodec:h264,res,acodec:m4a" --merge-output-format mp4 \
+  -o "/Volumes/warren/xhs/${NICKNAME}/%(title)s.mp4" "$VIDEO_URL"
 ```
 
 > **小红书链接要求**：必须包含 `xsec_token` 参数的完整链接，或 `xhslink.com` 短链。
@@ -66,7 +68,8 @@ yt-dlp -o "/Volumes/warren/xhs/${NICKNAME}/%(title)s.%(ext)s" "$VIDEO_URL"
 **B站/YouTube：**
 ```bash
 mkdir -p "/Volumes/warren/xhs/%(uploader)s"
-yt-dlp -o "/Volumes/warren/xhs/%(uploader)s/%(title).60s.%(ext)s" "视频链接"
+yt-dlp -S "vcodec:h264,res,acodec:m4a" --merge-output-format mp4 \
+  -o "/Volumes/warren/xhs/%(uploader)s/%(title).60s.mp4" "视频链接"
 ```
 
 **小红书**：
@@ -77,7 +80,8 @@ if [ -z "$NICKNAME" ]; then
     NICKNAME=$(yt-dlp --dump-json --no-download "$VIDEO_URL" 2>/dev/null | grep -o '"uploader_id":"[^"]*"' | cut -d'"' -f4)
 fi
 mkdir -p "/Volumes/warren/xhs/${NICKNAME}"
-yt-dlp -o "/Volumes/warren/xhs/${NICKNAME}/%(title).60s.%(ext)s" "$VIDEO_URL"
+yt-dlp -S "vcodec:h264,res,acodec:m4a" --merge-output-format mp4 \
+  -o "/Volumes/warren/xhs/${NICKNAME}/%(title).60s.mp4" "$VIDEO_URL"
 ```
 
 ### 第二步：转录
